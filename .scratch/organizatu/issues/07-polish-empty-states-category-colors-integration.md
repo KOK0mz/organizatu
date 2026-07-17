@@ -1,6 +1,6 @@
 # 07 — Polish: Empty States, Category Colors, Integration
 
-**What to build:** Consistent category colors across all sections, empty state illustrations with CTA prompts everywhere, dark mode polish, Spanish copy finalized, final integration verification.
+**What to build:** Consistent category colors across all sections, empty state illustrations with CTA prompts everywhere, dark and light mode polish, Spanish copy finalized, final integration verification.
 
 **Blocked by:** 02 — Tasks: List + CRUD + Completion, 03 — Calendar: Monthly Grid + Events CRUD, 04 — Text Notes: CRUD + Markdown Editor, 05 — Voice Notes: Recording + Playback + Transcription, 06 — Notifications: Task + Event Reminders
 
@@ -8,7 +8,7 @@
 
 - [ ] Category colors are consistent across tasks, notes, calendar events, and category selectors
 - [ ] All empty states have illustrations and CTA prompts (tasks, text notes, voice notes, calendar day, events)
-- [ ] Dark mode is polished: no light-mode artifacts, proper contrast ratios
+- [ ] Both dark and light modes are polished: no artifacts, proper contrast ratios in each
 - [ ] All UI copy is in Spanish (no English strings visible)
 - [ ] Tab navigation icons and labels are correct and visually consistent
 - [ ] Animations are smooth: tab transitions, modal open/close, checkbox toggle

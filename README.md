@@ -7,6 +7,7 @@ App móvil Android de productividad personal. Minimalista, limpia, sin cuentas n
 - **Tareas** — Lista por fecha, categorías (Trabajo, Personal, Estudio, Finanzas, Ocio), recordatorios, estados vacíos con CTA
 - **Notas** — Texto con editor Markdown + preview, notas de voz con grabación, waveform y transcripción (Whisper)
 - **Calendario** — Vista mensual, eventos todo el día o con hora, notificaciones 15 min antes
+- **Ajustes** — Toggle de tema (Sistema/Claro/Oscuro) desde el header
 
 ## Tech Stack
 
@@ -14,7 +15,7 @@ App móvil Android de productividad personal. Minimalista, limpia, sin cuentas n
 - TypeScript
 - SQLite (datos locales)
 - expo-notifications, expo-audio
-- Dark mode por defecto
+- Modo Sistema por defecto
 
 ## Requisitos
 

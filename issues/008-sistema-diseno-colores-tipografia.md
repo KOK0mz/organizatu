@@ -17,7 +17,7 @@ Ver `prototypes/design-system.html` — prototipo visual interactivo con dark mo
 | Decisión | Respuesta |
 |---|---|
 | Primario | Azul `#2563EB` (neutro, profesional) |
-| Dark mode | Por defecto, respeta sistema |
+| Modo Sistema | Por defecto, respeta SO |
 | Categorías | Trabajo=#2563EB, Personal=#7C3AED, Estudio=#059669, Finanzas=#D97706, Ocio=#E11D48 |
 | Tipografía | DM Sans vía `expo-font` (300–800) |
 | Espaciado | Grid de 4px (4/8/12/16/20/24/32/48/64) |

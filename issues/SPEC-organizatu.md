@@ -22,7 +22,7 @@ Una app móvil Android (APK) de uso personal con 3 módulos principales:
 2. **Notas**: Captura rápida de ideas en texto (Markdown) y notas de voz (grabación + transcripción)
 3. **Calendario**: Vista mensual de eventos con recordatorios
 
-Los datos se almacenan localmente en SQLite. Sin login, sin servidor, sin sincronización. Dark mode por defecto.
+Los datos se almacenan localmente en SQLite. Sin login, sin servidor, sin sincronización. Modo Sistema por defecto.
 
 ---
 
@@ -81,11 +81,19 @@ Los datos se almacenan localmente en SQLite. Sin login, sin servidor, sin sincro
 ### Navegación y general
 
 39. As a user, I want bottom tab navigation (Tareas, Notas, Calendario), so that I can switch between sections quickly
-40. As a user, I want the app to use dark mode by default (respecting system settings), so that it's easy on the eyes
+40. As a user, I want the app to use system mode by default (following OS setting), so that it matches my device preference
 41. As a user, I want the app to be in Spanish, so that I can use it comfortably
 42. As a user, I want to see the current category colors consistently across all sections, so that the UI feels cohesive
 43. As a user, I want the app to work entirely offline, so that I don't need internet connection
 44. As a user, I want to receive a notification permission prompt on first launch, so that I can enable reminders
+
+### Ajustes y tema
+
+45. As a user, I want a gear icon in the header of each main screen, so that I can access theme settings quickly
+46. As a user, I want to cycle between System/Light/Dark themes by tapping the gear icon, so that I can choose my preferred appearance
+47. As a user, I want my theme preference to persist across app restarts, so that I don't have to re-set it
+48. As a user, I want the "System" option to follow my device's theme in real time, so that the app matches my OS setting
+49. As a user, I want the gear icon to visually reflect the current theme mode, so that I know which mode is active at a glance
 
 ---
 
@@ -181,13 +189,23 @@ CREATE TABLE IF NOT EXISTS events (
 ### UI Design System
 
 - **Primary color:** #2563EB (blue)
-- **Dark mode:** Default, respects system
+- **System mode:** Default, follows OS setting
 - **Category colors:** Trabajo=#2563EB, Personal=#7C3AED, Estudio=#059669, Finanzas=#D97706, Ocio=#E11D48
 - **Typography:** DM Sans via expo-font (300-800)
 - **Spacing:** Grid of 4px (4/8/12/16/20/24/32/48/64)
 - **Border radius:** sm=8px, md=12px, lg=16px, full=9999px
 - **Icons:** @expo/ui Icon + @expo/material-symbols
 - **Animations:** Simple only — tab transitions, modal opening, checkbox toggle (reanimated)
+
+### Theme & Settings
+
+- **ThemeContext:** Extend existing context to accept `themeMode: 'system' | 'light' | 'dark'` override
+- **System mode:** When `themeMode` is `'system'`, delegates to `useColorScheme()` which reacts to OS changes in real time
+- **Light/Dark mode:** When `themeMode` is `'light'` or `'dark'`, forces that value as override
+- **Persistence:** AsyncStorage — stores `themeMode` value, loaded on app init
+- **UI pattern:** Gear icon in the header of each main screen (Tareas, Notas, Calendario); tapping cycles: Sistema → Claro → Oscuro → Sistema
+- **Icon state:** Gear icon changes visually based on active mode (e.g., filled vs outline, or different icon)
+- **No separate settings screen:** The toggle is inline in the header, not a dedicated view
 
 ### Content Creation Flows
 
@@ -216,6 +234,7 @@ CREATE TABLE IF NOT EXISTS events (
 4. **Notification service** — Channel creation, permission flow, scheduling, cancellation
 5. **Audio service** — Recording, playback, file persistence, cleanup
 6. **Database layer** — Migrations, queries, index performance
+7. **Theme/Settings feature** — Toggle cycle behavior, persistence, ThemeContext reactivity, header icon state
 
 ### Testing tools
 
@@ -241,7 +260,7 @@ CREATE TABLE IF NOT EXISTS events (
 - **Web functionality** — user said "later", evaluate after MVP
 - **Text search** — user said category filters are sufficient
 - **Custom categories** — user confirmed 5 predefined categories are enough
-- **Dark mode toggle** — app uses dark mode by default, respects system
+
 
 ---
 

@@ -27,7 +27,8 @@ Una app móvil Android (APK) minimalista y limpia para organizar tareas, notas (
 - [003-diseno-ui-pantalla-tareas](issues/003-diseno-ui-pantalla-tareas.md) — Lista vertical por fecha, chips de categoría, FAB + modal para crear, checkbox con animación de tachado
 - [006-flujo-creacion-contenido](issues/006-flujo-creacion-contenido.md) — Tareas desde tareas+calendario, notas texto/voz como tipos separados, FAB con submenú, autoguardado 3s con borradores, cuaderno de estudio descartado
 - [004-diseno-ui-calendario-notas](issues/004-diseno-ui-calendario-notas.md) — Calendario mensual con tap a día, crear evento con toggle todo el día, editor Markdown toggle写/preview, nota de voz con waveform+transcripción Whisper, estados vacíos con CTA
-- [008-sistema-diseno-colores-tipografia](issues/008-sistema-diseno-colores-tipografia.md) — Dark mode por defecto, DM Sans, azul #2563EB, grid 4px, radius 8/12/16, @expo/material-symbols, animaciones sencillas
+- [008-sistema-diseno-colores-tipografia](issues/008-sistema-diseno-colores-tipografia.md) — Modo Sistema por defecto, DM Sans, azul #2563EB, grid 4px, radius 8/12/16, @expo/material-symbols, animaciones sencillas
+- [009-pantalla-ajustes-toggle-tema](issues/009-pantalla-ajustes-toggle-tema.md) — Icono en header de cada pantalla, cíclico Sistema/Claro/Oscuro, persistencia AsyncStorage, ThemeContext override con `themeMode`, reacción en tiempo real via `useColorScheme()`
 
 ## Not yet specified
 
