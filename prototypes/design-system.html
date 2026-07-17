@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OrganizaTu — Sistema de Diseño (Prototipo v2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* === PALETA PRIMARIA === */
+    --color-primary: #2563EB;
+    --color-primary-light: #3B82F6;
+    --color-primary-dark: #1D4ED8;
+    --color-primary-surface: #EFF6FF;
+
+    /* === COLORES DE CATEGORÍA === */
+    --cat-trabajo: #2563EB;
+    --cat-personal: #7C3AED;
+    --cat-estudio: #059669;
+    --cat-finanzas: #D97706;
+    --cat-ocio: #E11D48;
+
+    /* === SEMÁNTICOS === */
+    --color-success: #059669;
+    --color-warning: #D97706;
+    --color-error: #DC2626;
+    --color-info: #2563EB;
+
+    /* === NEUTROS CLAROS === */
+    --surface-0: #FFFFFF;
+    --surface-1: #F8FAFC;
+    --surface-2: #F1F5F9;
+    --surface-3: #E2E8F0;
+    --border: #E2E8F0;
+    --border-strong: #CBD5E1;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-tertiary: #94A3B8;
+    --text-inverse: #FFFFFF;
+
+    /* === sombras === */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+
+    /* === RADIO === */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+
+    /* === ESPACIADO BASE (4px grid) === */
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 20px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-10: 40px;
+    --sp-12: 48px;
+    --sp-16: 64px;
+  }
+
+  .dark {
+    --surface-0: #0F172A;
+    --surface-1: #1E293B;
+    --surface-2: #334155;
+    --surface-3: #475569;
+    --border: #334155;
+    --border-strong: #475569;
+    --text-primary: #F1F5F9;
+    --text-secondary: #94A3B8;
+    --text-tertiary: #64748B;
+    --text-inverse: #0F172A;
+    --color-primary-surface: #1E3A5F;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5), 0 4px 6px -4px rgba(0,0,0,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--surface-1);
+    color: var(--text-primary);
+    line-height: 1.5;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--sp-8) var(--sp-6);
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--sp-12);
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .header .subtitle {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: var(--sp-1);
+  }
+
+  .toggle-btn {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    padding: var(--sp-2) var(--sp-4);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .toggle-btn:hover { background: var(--surface-3); }
+
+  /* Sections */
+  section {
+    margin-bottom: var(--sp-12);
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: var(--sp-2);
+    letter-spacing: -0.3px;
+  }
+
+  h2 .badge {
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--color-primary);
+    color: white;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    margin-left: var(--sp-2);
+    vertical-align: middle;
+  }
+
+  .section-desc {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: var(--sp-6);
+  }
+
+  /* Color swatches */
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--sp-3);
+  }
+
+  .swatch {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .swatch-color {
+    height: 64px;
+  }
+
+  .swatch-info {
+    padding: var(--sp-3);
+    background: var(--surface-0);
+  }
+
+  .swatch-name {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .swatch-hex {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  .swatch-use {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* Category chips */
+  .cat-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+  }
+
+  .cat-chip {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-4);
+    border-radius: var(--radius-full);
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+  }
+
+  .cat-chip .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.6);
+  }
+
+  .cat-chip-outline {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-4);
+    border-radius: var(--radius-full);
+    font-size: 14px;
+    font-weight: 500;
+    border: 1.5px solid;
+    background: transparent;
+  }
+
+  .cat-chip-outline .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* Typography */
+  .type-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-6);
+    padding: var(--sp-4) 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .type-meta {
+    min-width: 160px;
+    flex-shrink: 0;
+  }
+
+  .type-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .type-spec {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    margin-top: 2px;
+  }
+
+  .type-sample {
+    color: var(--text-primary);
+  }
+
+  /* Spacing */
+  .spacing-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-3);
+  }
+
+  .spacing-label {
+    min-width: 60px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  .spacing-bar {
+    height: 24px;
+    background: var(--color-primary);
+    border-radius: 4px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .spacing-bar:hover { opacity: 1; }
+
+  .spacing-px {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  /* Radius demo */
+  .radius-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--sp-4);
+  }
+
+  .radius-box {
+    aspect-ratio: 1;
+    background: var(--color-primary);
+    opacity: 0.15;
+    border: 2px dashed var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  /* Shadow demo */
+  .shadow-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sp-6);
+  }
+
+  .shadow-box {
+    background: var(--surface-0);
+    border-radius: var(--radius-md);
+    padding: var(--sp-6);
+    text-align: center;
+  }
+
+  .shadow-label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: var(--sp-1);
+  }
+
+  .shadow-spec {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  /* Component examples */
+  .component-row {
+    display: flex;
+    gap: var(--sp-4);
+    flex-wrap: wrap;
+    margin-bottom: var(--sp-4);
+  }
+
+  /* Task card mock */
+  .task-card {
+    background: var(--surface-0);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--sp-4);
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .task-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-2);
+  }
+
+  .task-checkbox {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border-strong);
+    flex-shrink: 0;
+  }
+
+  .task-checkbox.checked {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    position: relative;
+  }
+
+  .task-checkbox.checked::after {
+    content: '✓';
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .task-title {
+    font-size: 15px;
+    font-weight: 500;
+    flex: 1;
+  }
+
+  .task-title.done {
+    text-decoration: line-through;
+    color: var(--text-tertiary);
+  }
+
+  .task-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-left: 34px;
+  }
+
+  .task-date {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .task-cat {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+    color: white;
+  }
+
+  /* Note card mock */
+  .note-card {
+    background: var(--surface-0);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--sp-4);
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .note-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: var(--sp-2);
+  }
+
+  .note-preview {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .note-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--sp-3);
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--border);
+  }
+
+  .note-tag {
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  .note-type {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-primary);
+  }
+
+  /* FAB mock */
+  .fab {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: var(--color-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 300;
+    box-shadow: var(--shadow-lg);
+    margin: var(--sp-4) 0;
+  }
+
+  /* Bottom nav mock */
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    background: var(--surface-0);
+    border-top: 1px solid var(--border);
+    padding: var(--sp-2) 0;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: var(--sp-2) var(--sp-4);
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  .nav-item.active {
+    color: var(--color-primary);
+  }
+
+  .nav-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: currentColor;
+    opacity: 0.2;
+  }
+
+  .nav-item.active .nav-icon {
+    opacity: 0.15;
+    background: var(--color-primary);
+  }
+
+  /* Chip filter mock */
+  .chip-row {
+    display: flex;
+    gap: var(--sp-2);
+    overflow-x: auto;
+    padding-bottom: var(--sp-2);
+  }
+
+  .chip {
+    padding: var(--sp-2) var(--sp-4);
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    border: 1.5px solid var(--border);
+    color: var(--text-secondary);
+    background: var(--surface-0);
+  }
+
+  .chip.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+  }
+
+  /* Decisiones pendientes */
+  .decisions-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .decisions-list li {
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--surface-0);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--sp-2);
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+  }
+
+  .decisions-list .q-num {
+    background: var(--color-primary-surface);
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+  }
+
+  /* Dark mode notice */
+  .dark-notice {
+    background: var(--color-primary-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    padding: var(--sp-4);
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: var(--sp-6);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+
+  .dark-notice .icon { font-size: 20px; }
+</style>
+</head>
+<body class="dark">
+<div class="container">
+
+  <div class="header">
+    <div>
+      <h1>OrganizaTu — Sistema de Diseño</h1>
+      <div class="subtitle">Prototipo v2 · Ticket 008 · Dark mode por defecto · DM Sans</div>
+    </div>
+    <button class="toggle-btn" onclick="toggleDark()">☀️ Claro</button>
+  </div>
+
+  <div class="dark-notice">
+    <span class="icon">💡</span>
+    <div><strong>Dark mode por defecto.</strong> La app arranca en oscuro y respeta el sistema. Pulsa el botón para previsualizar el modo claro.</div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- 1. COLORES PRIMARIOS                         -->
+  <!-- ============================================ -->
+  <section>
+    <h2>Colores Primarios</h2>
+    <p class="section-desc">Una sola tonalidad azul como acento. Todo lo demás es neutro.</p>
+
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#2563EB"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Primary</div>
+          <div class="swatch-hex">#2563EB</div>
+          <div class="swatch-use">Botones, links, acentos</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#3B82F6"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Primary Light</div>
+          <div class="swatch-hex">#3B82F6</div>
+          <div class="swatch-use">Hover, pressed states</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#1D4ED8"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Primary Dark</div>
+          <div class="swatch-hex">#1D4ED8</div>
+          <div class="swatch-use">Press depth</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#EFF6FF"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Primary Surface</div>
+          <div class="swatch-hex">#EFF6FF</div>
+          <div class="swatch-use">Fondos de acento suaves</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 2. NEUTROS                                   -->
+  <!-- ============================================ -->
+  <section>
+    <h2>Neutros (Superficies y Texto)</h2>
+    <p class="section-desc">Escala de grises de Slate. Oscuro por defecto, claro disponible.</p>
+
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FFFFFF; border-bottom:1px solid #E2E8F0"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Surface 0</div>
+          <div class="swatch-hex">#FFFFFF / #0F172A</div>
+          <div class="swatch-use">Fondo de cards</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#F8FAFC"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Surface 1</div>
+          <div class="swatch-hex">#F8FAFC</div>
+          <div class="swatch-use">Fondo de pantalla</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#F1F5F9"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Surface 2</div>
+          <div class="swatch-hex">#F1F5F9</div>
+          <div class="swatch-use">Botones secundarios</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#E2E8F0"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Border</div>
+          <div class="swatch-hex">#E2E8F0</div>
+          <div class="swatch-use">Bordes suaves</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#0F172A"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Text Primary</div>
+          <div class="swatch-hex">#0F172A</div>
+          <div class="swatch-use">Texto principal</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#475569"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Text Secondary</div>
+          <div class="swatch-hex">#475569</div>
+          <div class="swatch-use">Texto de soporte</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 3. CATEGORÍAS                                -->
+  <!-- ============================================ -->
+  <section>
+    <h2>Colores de Categoría</h2>
+    <p class="section-desc">Cada categoría tiene un color único. Se usa en chips, bordes laterales y filtros.</p>
+
+    <h3 style="font-size:14px; color:var(--text-secondary); margin-bottom:var(--sp-3)">Llenos (filtros activos, badges)</h3>
+    <div class="cat-grid" style="margin-bottom:var(--sp-6)">
+      <div class="cat-chip" style="background:var(--cat-trabajo)">
+        <span class="dot"></span> Trabajo
+      </div>
+      <div class="cat-chip" style="background:var(--cat-personal)">
+        <span class="dot"></span> Personal
+      </div>
+      <div class="cat-chip" style="background:var(--cat-estudio)">
+        <span class="dot"></span> Estudio
+      </div>
+      <div class="cat-chip" style="background:var(--cat-finanzas)">
+        <span class="dot"></span> Finanzas
+      </div>
+      <div class="cat-chip" style="background:var(--cat-ocio)">
+        <span class="dot"></span> Ocio
+      </div>
+    </div>
+
+    <h3 style="font-size:14px; color:var(--text-secondary); margin-bottom:var(--sp-3)">Outline (chips inactivos, etiquetas)</h3>
+    <div class="cat-grid">
+      <div class="cat-chip-outline" style="border-color:var(--cat-trabajo); color:var(--cat-trabajo)">
+        <span class="dot" style="background:var(--cat-trabajo)"></span> Trabajo
+      </div>
+      <div class="cat-chip-outline" style="border-color:var(--cat-personal); color:var(--cat-personal)">
+        <span class="dot" style="background:var(--cat-personal)"></span> Personal
+      </div>
+      <div class="cat-chip-outline" style="border-color:var(--cat-estudio); color:var(--cat-estudio)">
+        <span class="dot" style="background:var(--cat-estudio)"></span> Estudio
+      </div>
+      <div class="cat-chip-outline" style="border-color:var(--cat-finanzas); color:var(--cat-finanzas)">
+        <span class="dot" style="background:var(--cat-finanzas)"></span> Finanzas
+      </div>
+      <div class="cat-chip-outline" style="border-color:var(--cat-ocio); color:var(--cat-ocio)">
+        <span class="dot" style="background:var(--cat-ocio)"></span> Ocio
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 4. TIPOGRAFÍA                                -->
+  <!-- ============================================ -->
+  <section>
+    <h2>Tipografía</h2>
+    <p class="section-desc">DM Sans via expo-font. Consistencia visual entre plataformas, peso 300–800.</p>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">Display</div>
+        <div class="type-spec">32px / 38px / Bold 700</div>
+      </div>
+      <div class="type-sample" style="font-size:32px; font-weight:700; line-height:38px">OrganizaTu</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">Heading 1</div>
+        <div class="type-spec">24px / 30px / Semibold 600</div>
+      </div>
+      <div class="type-sample" style="font-size:24px; font-weight:600; line-height:30px">Tareas de hoy</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">Heading 2</div>
+        <div class="type-spec">18px / 24px / Semibold 600</div>
+      </div>
+      <div class="type-sample" style="font-size:18px; font-weight:600; line-height:24px">Lunes 16 de julio</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">Body</div>
+        <div class="type-spec">15px / 22px / Regular 400</div>
+      </div>
+      <div class="type-sample" style="font-size:15px; font-weight:400; line-height:22px">Comprar ingredients para la cena. Llevar lista.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">Body Medium</div>
+        <div class="type-spec">15px / 22px / Medium 500</div>
+      </div>
+      <div class="type-sample" style="font-size:15px; font-weight:500; line-height:22px">Título de tarea en la card</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">Caption</div>
+        <div class="type-spec">12px / 16px / Medium 500</div>
+      </div>
+      <div class="type-sample" style="font-size:12px; font-weight:500; line-height:16px; color:var(--text-secondary)">Hace 2 horas · Trabajo</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">Overline</div>
+        <div class="type-spec">11px / 14px / Semibold 600 / UPPERCASE</div>
+      </div>
+      <div class="type-sample" style="font-size:11px; font-weight:600; line-height:14px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-tertiary)">Categorías</div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 5. ESPACIADO                                 -->
+  <!-- ============================================ -->
+  <section>
+    <h2>Espaciado <span class="badge">4px grid</span></h2>
+    <p class="section-desc">Todo múltiplo de 4px. Consistencia automática.</p>
+
+    <div class="spacing-row">
+      <div class="spacing-label">sp-1</div>
+      <div class="spacing-bar" style="width:4px"></div>
+      <div class="spacing-px">4px</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-label">sp-2</div>
+      <div class="spacing-bar" style="width:8px"></div>
+      <div class="spacing-px">8px</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-label">sp-3</div>
+      <div class="spacing-bar" style="width:12px"></div>
+      <div class="spacing-px">12px</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-label">sp-4</div>
+      <div class="spacing-bar" style="width:16px"></div>
+      <div class="spacing-px">16px</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-label">sp-5</div>
+      <div class="spacing-bar" style="width:20px"></div>
+      <div class="spacing-px">20px</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-label">sp-6</div>
+      <div class="spacing-bar" style="width:24px"></div>
+      <div class="spacing-px">24px</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-label">sp-8</div>
+      <div class="spacing-bar" style="width:32px"></div>
+      <div class="spacing-px">32px</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-label">sp-10</div>
+      <div class="spacing-bar" style="width:40px"></div>
+      <div class="spacing-px">40px</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-label">sp-12</div>
+      <div class="spacing-bar" style="width:48px"></div>
+      <div class="spacing-px">48px</div>
+    </div>
+    <div class="spacing-row">
+      <div class="spacing-label">sp-16</div>
+      <div class="spacing-bar" style="width:64px"></div>
+      <div class="spacing-px">64px</div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 6. BORDER RADIUS                             -->
+  <!-- ============================================ -->
+  <section>
+    <h2>Border Radius</h2>
+    <p class="section-desc">Tres niveles + full para chips/badges.</p>
+
+    <div class="radius-grid">
+      <div class="radius-box" style="border-radius:8px">sm · 8px</div>
+      <div class="radius-box" style="border-radius:12px">md · 12px</div>
+      <div class="radius-box" style="border-radius:16px">lg · 16px</div>
+      <div class="radius-box" style="border-radius:9999px">full</div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 7. SOMBRAS                                   -->
+  <!-- ============================================ -->
+  <section>
+    <h2>Sombras y Elevación</h2>
+    <p class="section-desc">Tres niveles de profundidad. Sutiles en claro, más pronunciadas en oscuro.</p>
+
+    <div class="shadow-grid">
+      <div class="shadow-box" style="box-shadow:var(--shadow-sm)">
+        <div class="shadow-label">Shadow SM</div>
+        <div class="shadow-spec">Cards en reposo</div>
+      </div>
+      <div class="shadow-box" style="box-shadow:var(--shadow-md)">
+        <div class="shadow-label">Shadow MD</div>
+        <div class="shadow-spec">Bottom nav, modales</div>
+      </div>
+      <div class="shadow-box" style="box-shadow:var(--shadow-lg)">
+        <div class="shadow-label">Shadow LG</div>
+        <div class="shadow-spec">FAB, dropdowns</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 8. ICONOS                                    -->
+  <!-- ============================================ -->
+  <section>
+    <h2>Iconos <span class="badge">@expo/ui + Material Symbols</span></h2>
+    <p class="section-desc">Vectoriales nativos via <code>@expo/ui</code> Icon + <code>@expo/material-symbols</code>. Sin fuentes de iconos — tree-shakeable, solo los iconos que importas.</p>
+
+    <div style="background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-md); padding:var(--sp-4); margin-bottom:var(--sp-4)">
+      <div style="font-size:13px; font-weight:600; margin-bottom:var(--sp-2)">Instalación</div>
+      <code style="font-size:12px; color:var(--color-primary); background:var(--color-primary-surface); padding:2px 8px; border-radius:4px">npx expo install @expo/material-symbols</code>
+    </div>
+
+    <div style="font-size:13px; font-weight:600; margin-bottom:var(--sp-3)">Uso en código</div>
+    <div style="background:var(--surface-2); border-radius:var(--radius-sm); padding:var(--sp-4); font-family:'SF Mono','Fira Code',monospace; font-size:12px; line-height:1.8; margin-bottom:var(--sp-6); overflow-x:auto">
+      <span style="color:var(--text-tertiary)">// Importar icono individual</span><br>
+      <span style="color:var(--cat-personal)">import</span> HomeIcon <span style="color:var(--cat-personal)">from</span> <span style="color:var(--cat-estudio)">'@expo/material-symbols/home.xml'</span>;<br>
+      <br>
+      <span style="color:var(--text-tertiary)">// Usar con @expo/ui Icon</span><br>
+      <span style="color:var(--cat-personal)">&lt;</span><span style="color:var(--cat-trabajo)">Host</span> matchContents<span style="color:var(--cat-personal)">&gt;</span><br>
+      &nbsp;&nbsp;<span style="color:var(--cat-personal)">&lt;</span><span style="color:var(--cat-trabajo)">Icon</span> name={HomeIcon} size={<span style="color:var(--cat-finanzas)">24</span>} color={<span style="color:var(--cat-estudio)">'#fff'</span>} <span style="color:var(--cat-personal)">/&gt;</span><br>
+      <span style="color:var(--cat-personal)">&lt;/</span><span style="color:var(--cat-trabajo)">Host</span><span style="color:var(--cat-personal)">&gt;</span>
+    </div>
+
+    <div style="font-size:13px; font-weight:600; margin-bottom:var(--sp-3)">Iconos necesarios para la app</div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:var(--sp-3)">
+      <div style="background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:var(--sp-3)">
+        <div style="font-size:13px; font-weight:500">Navegación</div>
+        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px">check_circle, edit_note, calendar_month</div>
+      </div>
+      <div style="background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:var(--sp-3)">
+        <div style="font-size:13px; font-weight:500">Acciones</div>
+        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px">add, close, delete, search, filter_list</div>
+      </div>
+      <div style="background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:var(--sp-3)">
+        <div style="font-size:13px; font-weight:500">Categorías</div>
+        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px">work, person, school, savings, sports_esports</div>
+      </div>
+      <div style="background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:var(--sp-3)">
+        <div style="font-size:13px; font-weight:500">Contenido</div>
+        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px">mic, mic_off, play_arrow, pause, check</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 8. COMPONENTES (mockups)                     -->
+  <!-- ============================================ -->
+  <section>
+    <h2>Componentes — Mockups</h2>
+    <p class="section-desc">Cómo se ven los elementos clave juntos. No es código, es la dirección visual.</p>
+
+    <div class="component-row">
+      <!-- Task card -->
+      <div class="task-card">
+        <div class="task-card-header">
+          <div class="task-checkbox"></div>
+          <div class="task-title">Comprar víveres</div>
+        </div>
+        <div class="task-meta">
+          <span class="task-date">Hoy, 18:00</span>
+          <span class="task-cat" style="background:var(--cat-personal)">Personal</span>
+        </div>
+      </div>
+
+      <!-- Task done -->
+      <div class="task-card" style="opacity:0.7">
+        <div class="task-card-header">
+          <div class="task-checkbox checked"></div>
+          <div class="task-title done">Revisar correo</div>
+        </div>
+        <div class="task-meta">
+          <span class="task-date">Ayer</span>
+          <span class="task-cat" style="background:var(--cat-trabajo)">Trabajo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row">
+      <!-- Note card -->
+      <div class="note-card">
+        <div class="note-title">Ideas para el proyecto</div>
+        <div class="note-preview">Investigar expo-audio para grabación. Verificar compatibilidad con Whisper API...</div>
+        <div class="note-footer">
+          <span class="note-tag">Hace 3h · Estudio</span>
+          <span class="note-type">📝 Texto</span>
+        </div>
+      </div>
+
+      <!-- Voice note card -->
+      <div class="note-card">
+        <div class="note-title">Nota de voz — reunión</div>
+        <div class="note-preview" style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:20px">🎙️</span>
+          <span style="font-size:12px; color:var(--text-tertiary)">2:34 min · Transcripción disponible</span>
+        </div>
+        <div class="note-footer">
+          <span class="note-tag">Ayer · Trabajo</span>
+          <span class="note-type">🔊 Voz</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAB -->
+    <div style="display:flex; align-items:center; gap:var(--sp-4)">
+      <div class="fab">+</div>
+      <span style="font-size:13px; color:var(--text-secondary)">FAB — Acción principal</span>
+    </div>
+
+    <!-- Chips -->
+    <div style="margin-top:var(--sp-6)">
+      <div style="font-size:13px; color:var(--text-secondary); margin-bottom:var(--sp-3)">Filtros de categoría:</div>
+      <div class="chip-row">
+        <div class="chip active">Todas</div>
+        <div class="chip">Trabajo</div>
+        <div class="chip">Personal</div>
+        <div class="chip">Estudio</div>
+        <div class="chip">Finanzas</div>
+        <div class="chip">Ocio</div>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div style="margin-top:var(--sp-6)">
+      <div style="font-size:13px; color:var(--text-secondary); margin-bottom:var(--sp-3)">Navegación inferior:</div>
+      <div class="bottom-nav">
+        <div class="nav-item active">
+          <div class="nav-icon"></div>
+          <span>Tareas</span>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon"></div>
+          <span>Notas</span>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon"></div>
+          <span>Calendario</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 9. DECISIONES                                -->
+  <!-- ============================================ -->
+  <section>
+    <h2>Decisiones</h2>
+    <p class="section-desc">Lo que ya está decidido y lo que queda por confirmar.</p>
+
+    <div style="background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-md); padding:var(--sp-4); margin-bottom:var(--sp-4)">
+      <div style="font-size:13px; font-weight:600; color:var(--color-success); margin-bottom:var(--sp-3)">✅ Resueltas</div>
+      <div style="font-size:14px; line-height:2">
+        <div>1. Primario: Azul <code style="font-size:12px">#2563EB</code></div>
+        <div>2. Dark mode por defecto, respeta sistema</div>
+        <div>3. Categorías: azul/púrpura/verde/naranja/rosa</div>
+        <div>4. Tipografía: DM Sans (expo-font)</div>
+        <div>5. Radius: 8/12/16px + full</div>
+        <div>6. Iconos: @expo/ui Icon + @expo/material-symbols</div>
+      </div>
+    </div>
+
+    <div style="background:var(--color-primary-surface); border:1px solid var(--color-primary); border-radius:var(--radius-md); padding:var(--sp-4)">
+      <div style="font-size:13px; font-weight:600; color:var(--color-primary); margin-bottom:var(--sp-3)">⏳ Por confirmar</div>
+      <ol class="decisions-list">
+        <li>
+          <span class="q-num">1</span>
+          <div><strong>¿Instalar @expo/material-symbols ahora o más tarde?</strong> Se instala cuando se implemente el primer componente que use iconos (probablemente el tab bar).</div>
+        </li>
+        <li>
+          <span class="q-num">2</span>
+          <div><strong>¿Animaciones de transición?</strong> ¿Quietas o con transiciones suaves al cambiar de tab, abrir modales, etc.? reanimated ya está instalado.</div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+</div>
+
+<script>
+function toggleDark() {
+  document.body.classList.toggle('dark');
+  const btn = document.querySelector('.toggle-btn');
+  btn.textContent = document.body.classList.contains('dark') ? '☀️ Claro' : '🌙 Oscuro';
+}
+</script>
+</body>
+</html>

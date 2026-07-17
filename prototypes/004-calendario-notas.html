@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OrganizaTu — Prototipo Calendario y Notas</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --primary: #2563EB;
+      --primary-light: #DBEAFE;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --text: #0F172A;
+      --text-secondary: #64748B;
+      --border: #E2E8F0;
+      --danger: #EF4444;
+      --success: #22C55E;
+      --category-trabajo: #3B82F6;
+      --category-personal: #8B5CF6;
+      --category-estudio: #F59E0B;
+      --category-finanzas: #10B981;
+      --category-ocio: #EC4899;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .phone {
+      width: 375px;
+      height: 812px;
+      background: var(--bg);
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .phone-label {
+      color: #94A3B8;
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .screen {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Status bar */
+    .status-bar {
+      height: 54px;
+      padding: 14px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface);
+    }
+    .status-bar .time { font-weight: 600; font-size: 15px; }
+    .status-bar .icons { display: flex; gap: 6px; font-size: 12px; }
+
+    /* Header */
+    .header {
+      background: var(--surface);
+      padding: 8px 20px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header h1 { font-size: 28px; font-weight: 700; color: var(--text); }
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-subtitle { font-size: 14px; color: var(--text-secondary); margin-top: 2px; }
+
+    /* Calendar */
+    .calendar-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: var(--surface);
+    }
+    .calendar-nav .month { font-size: 18px; font-weight: 600; }
+    .calendar-nav button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--primary);
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .calendar-nav button:hover { background: var(--primary-light); }
+
+    .calendar-grid {
+      background: var(--surface);
+      padding: 0 12px 16px;
+    }
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding-bottom: 8px;
+    }
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+    }
+    .calendar-day:hover { background: var(--primary-light); }
+    .calendar-day.today {
+      background: var(--primary);
+      color: white;
+      font-weight: 700;
+    }
+    .calendar-day.has-event::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    .calendar-day.today.has-event::after { background: white; }
+    .calendar-day.other-month { color: #CBD5E1; }
+
+    /* Day events */
+    .day-events {
+      flex: 1;
+      padding: 16px 20px;
+      overflow-y: auto;
+    }
+    .day-events-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    .event-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .event-card.all-day { border-left-color: var(--category-estudio); }
+    .event-time { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+    .event-title { font-size: 15px; font-weight: 600; margin-top: 4px; }
+    .event-category {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+    .cat-trabajo { background: #DBEAFE; color: #1E40AF; }
+    .cat-personal { background: #EDE9FE; color: #5B21B6; }
+    .cat-finanzas { background: #D1FAE5; color: #065F46; }
+    .cat-ocio { background: #FCE7F3; color: #9D174D; }
+
+    /* Empty state */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      text-align: center;
+    }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+    .empty-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .empty-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+    /* FAB */
+    .fab {
+      position: absolute;
+      bottom: 90px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+    .fab:hover { transform: scale(1.05); }
+
+    /* Bottom nav */
+    .bottom-nav {
+      height: 83px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      padding-top: 10px;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .nav-item.active { color: var(--primary); }
+    .nav-icon { font-size: 22px; }
+
+    /* Create Event form */
+    .form-group {
+      padding: 16px 20px;
+    }
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+    }
+    .form-input:focus { border-color: var(--primary); }
+    .form-input::placeholder { color: #CBD5E1; }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      background: var(--surface);
+    }
+    .toggle-label { font-size: 15px; color: var(--text); }
+    .toggle {
+      width: 50px;
+      height: 28px;
+      background: #CBD5E1;
+      border-radius: 14px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .toggle.on { background: var(--primary); }
+    .toggle::after {
+      content: '';
+      width: 24px;
+      height: 24px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.3s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .toggle.on::after { transform: translateX(22px); }
+
+    .time-picker {
+      display: flex;
+      gap: 12px;
+      padding: 0 20px;
+    }
+    .time-picker .form-input { flex: 1; }
+
+    .category-pills {
+      display: flex;
+      gap: 8px;
+      padding: 0 20px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pill.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .save-btn {
+      margin: 20px;
+      padding: 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: calc(100% - 40px);
+    }
+
+    /* Notes editor */
+    .editor-toolbar {
+      display: flex;
+      gap: 4px;
+      padding: 8px 12px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .toolbar-btn {
+      padding: 8px 12px;
+      border: none;
+      background: none;
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .toolbar-btn.active { background: var(--primary-light); color: var(--primary); }
+
+    .editor-area {
+      flex: 1;
+      padding: 16px 20px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+      overflow-y: auto;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+    .editor-area h2 { font-size: 20px; margin-bottom: 8px; }
+    .editor-area p { margin-bottom: 12px; }
+    .editor-area .md-bold { font-weight: 700; }
+    .editor-area .md-code {
+      background: #F1F5F9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .editor-area .md-list { padding-left: 20px; margin-bottom: 12px; }
+    .editor-area .md-list li { margin-bottom: 4px; }
+    .editor-area .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 18px;
+      background: var(--primary);
+      animation: blink 1s infinite;
+      vertical-align: text-bottom;
+    }
+    @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+    .preview-toggle {
+      display: flex;
+      padding: 0 20px;
+      gap: 0;
+      margin-bottom: 12px;
+    }
+    .preview-btn {
+      flex: 1;
+      padding: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+    .preview-btn:first-child { border-radius: 8px 0 0 8px; }
+    .preview-btn:last-child { border-radius: 0 8px 8px 0; }
+    .preview-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Voice note */
+    .voice-player {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 12px 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .waveform {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-bottom: 12px;
+    }
+    .waveform .bar {
+      width: 3px;
+      background: var(--primary-light);
+      border-radius: 2px;
+      transition: height 0.1s;
+    }
+    .waveform .bar.played { background: var(--primary); }
+    .player-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .play-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .player-time { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+    .player-progress { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
+    .player-progress-fill { width: 35%; height: 100%; background: var(--primary); border-radius: 2px; }
+
+    .record-section {
+      padding: 20px;
+      text-align: center;
+    }
+    .record-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--danger);
+      color: white;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(239,68,68,0.4);
+      transition: transform 0.2s;
+    }
+    .record-btn:hover { transform: scale(1.05); }
+    .record-label {
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .record-time {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--danger);
+      margin-top: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .transcription-box {
+      margin: 12px 20px;
+      padding: 16px;
+      background: #FFFBEB;
+      border: 1.5px solid #FDE68A;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #92400E;
+    }
+    .transcription-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #B45309;
+      margin-bottom: 8px;
+    }
+
+    .note-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .note-list-content { flex: 1; }
+    .note-list-title { font-size: 15px; font-weight: 600; }
+    .note-list-preview { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+    .note-list-meta { font-size: 11px; color: #CBD5E1; margin-top: 4px; }
+    .note-type-badge {
+      font-size: 18px;
+      margin-left: 12px;
+    }
+
+    .section-divider {
+      padding: 12px 20px 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen 1: Calendario vista mensual -->
+  <div>
+    <div class="phone-label">Calendario — Vista Mensual</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span class="time">9:41</span>
+          <span class="icons">📶 🔋</span>
+        </div>
+        <div class="header">
+          <div class="header-row">
+            <h1>Calendario</h1>
+          </div>
+        </div>
+        <div class="calendar-nav">
+          <button>‹</button>
+          <span class="month">Julio 2026</span>
+          <button>›</button>
+        </div>
+        <div class="calendar-grid">
+          <div class="calendar-weekdays">
+            <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+          </div>
+          <div class="calendar-days">
+            <span class="calendar-day other-month">29</span>
+            <span class="calendar-day other-month">30</span>
+            <span class="calendar-day">1</span>
+            <span class="calendar-day">2</span>
+            <span class="calendar-day has-event">3</span>
+            <span class="calendar-day">4</span>
+            <span class="calendar-day">5</span>
+            <span class="calendar-day has-event">6</span>
+            <span class="calendar-day">7</span>
+            <span class="calendar-day">8</span>
+            <span class="calendar-day has-event">9</span>
+            <span class="calendar-day">10</span>
+            <span class="calendar-day">11</span>
+            <span class="calendar-day">12</span>
+            <span class="calendar-day">13</span>
+            <span class="calendar-day has-event">14</span>
+            <span class="calendar-day today has-event">15</span>
+            <span class="calendar-day">16</span>
+            <span class="calendar-day has-event">17</span>
+            <span class="calendar-day">18</span>
+            <span class="calendar-day">19</span>
+            <span class="calendar-day">20</span>
+            <span class="calendar-day has-event">21</span>
+            <span class="calendar-day">22</span>
+            <span class="calendar-day">23</span>
+            <span class="calendar-day">24</span>
+            <span class="calendar-day">25</span>
+            <span class="calendar-day">26</span>
+            <span class="calendar-day">27</span>
+            <span class="calendar-day">28</span>
+            <span class="calendar-day">29</span>
+            <span class="calendar-day has-event">30</span>
+            <span class="calendar-day">31</span>
+            <span class="calendar-day other-month">1</span>
+            <span class="calendar-day other-month">2</span>
+          </div>
+        </div>
+        <div class="day-events">
+          <div class="day-events-title">Hoy — 15 julio</div>
+          <div class="event-card all-day">
+            <div class="event-time">Todo el día</div>
+            <div class="event-title">Vacaciones playa</div>
+            <span class="event-category cat-ocio">Ocio</span>
+          </div>
+          <div class="event-card">
+            <div class="event-time">10:00 — 11:00</div>
+            <div class="event-title">Reunión equipo</div>
+            <span class="event-category cat-trabajo">Trabajo</span>
+          </div>
+          <div class="event-card">
+            <div class="event-time">18:00 — 19:00</div>
+            <div class="event-title">Gimnasio</div>
+            <span class="event-category cat-personal">Personal</span>
+          </div>
+        </div>
+        <button class="fab">+</button>
+        <div class="bottom-nav">
+          <button class="nav-item"><span class="nav-icon">✓</span>Tareas</button>
+          <button class="nav-item active"><span class="nav-icon">📅</span>Calendario</button>
+          <button class="nav-item"><span class="nav-icon">📝</span>Notas</button>
+          <button class="nav-item"><span class="nav-icon">⚙️</span>Ajustes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Crear Evento -->
+  <div>
+    <div class="phone-label">Crear Evento</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span class="time">9:41</span>
+          <span class="icons">📶 🔋</span>
+        </div>
+        <div class="header">
+          <div class="header-row">
+            <h1>Nuevo Evento</h1>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Título</label>
+          <input class="form-input" type="text" placeholder="¿Qué planeas hacer?">
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Todo el día</span>
+          <div class="toggle"></div>
+        </div>
+        <div class="time-picker">
+          <div>
+            <label class="form-label">Inicio</label>
+            <input class="form-input" type="time" value="10:00">
+          </div>
+          <div>
+            <label class="form-label">Fin</label>
+            <input class="form-input" type="time" value="11:00">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Categoría</label>
+          <div class="category-pills">
+            <span class="pill selected">Trabajo</span>
+            <span class="pill">Personal</span>
+            <span class="pill">Finanzas</span>
+            <span class="pill">Ocio</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nota (opcional)</label>
+          <input class="form-input" type="text" placeholder="Detalles adicionales...">
+        </div>
+        <button class="save-btn">Guardar evento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Lista de Notas -->
+  <div>
+    <div class="phone-label">Notas — Lista</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span class="time">9:41</span>
+          <span class="icons">📶 🔋</span>
+        </div>
+        <div class="header">
+          <div class="header-row">
+            <h1>Notas</h1>
+          </div>
+          <div class="header-subtitle">4 notas</div>
+        </div>
+        <div class="section-divider">Notas de texto</div>
+        <div class="note-list-item">
+          <div class="note-list-content">
+            <div class="note-list-title">Ideas proyecto app</div>
+            <div class="note-list-preview">## Funcionalidades clave - SQLite local...</div>
+            <div class="note-list-meta">15 jul 2026 · 1.2 KB</div>
+          </div>
+          <span class="note-type-badge">📝</span>
+        </div>
+        <div class="note-list-item">
+          <div class="note-list-content">
+            <div class="note-list-title">Lista compra semanal</div>
+            <div class="note-list-preview">- Leche - Huevos - Pan...</div>
+            <div class="note-list-meta">14 jul 2026 · 340 B</div>
+          </div>
+          <span class="note-type-badge">📝</span>
+        </div>
+        <div class="note-list-item">
+          <div class="note-list-content">
+            <div class="note-list-title">Resumen libro Atomic Habits</div>
+            <div class="note-list-preview">## Capítulo 1: Los hábitos son...</div>
+            <div class="note-list-meta">12 jul 2026 · 3.4 KB</div>
+          </div>
+          <span class="note-type-badge">📝</span>
+        </div>
+        <div class="section-divider">Notas de voz</div>
+        <div class="note-list-item">
+          <div class="note-list-content">
+            <div class="note-list-title">Nota de voz — 15 jul</div>
+            <div class="note-list-preview">🎙 2:34 · Transcripción disponible</div>
+            <div class="note-list-meta">15 jul 2026 · 1.8 MB</div>
+          </div>
+          <span class="note-type-badge">🎤</span>
+        </div>
+        <button class="fab">+</button>
+        <div class="bottom-nav">
+          <button class="nav-item"><span class="nav-icon">✓</span>Tareas</button>
+          <button class="nav-item"><span class="nav-icon">📅</span>Calendario</button>
+          <button class="nav-item active"><span class="nav-icon">📝</span>Notas</button>
+          <button class="nav-item"><span class="nav-icon">⚙️</span>Ajustes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 4: Editor Markdown -->
+  <div>
+    <div class="phone-label">Editor Markdown</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span class="time">9:41</span>
+          <span class="icons">📶 🔋</span>
+        </div>
+        <div class="header">
+          <div class="header-row">
+            <h1 style="font-size:16px; font-weight:600;">Ideas proyecto app</h1>
+          </div>
+          <div class="header-subtitle">Guardado hace 3s</div>
+        </div>
+        <div class="preview-toggle">
+          <button class="preview-btn active">Escribir</button>
+          <button class="preview-btn">Vista previa</button>
+        </div>
+        <div class="editor-toolbar">
+          <button class="toolbar-btn"><b>B</b></button>
+          <button class="toolbar-btn"><i>I</i></button>
+          <button class="toolbar-btn">H1</button>
+          <button class="toolbar-btn">H2</button>
+          <button class="toolbar-btn">• Lista</button>
+          <button class="toolbar-btn">1. Lista</button>
+          <button class="toolbar-btn">""</button>
+          <button class="toolbar-btn">`código`</button>
+          <button class="toolbar-btn">🔗</button>
+        </div>
+        <div class="editor-area">
+          <h2>Funcionalidades clave<span class="cursor"></span></h2>
+          <p>La app debe soportar:</p>
+          <ul class="md-list">
+            <li>SQLite local para persistencia</li>
+            <li>Calendario con eventos</li>
+            <li>Notas con soporte <span class="md-bold">Markdown</span></li>
+            <li>Grabación de <span class="md-code">audio</span></li>
+          </ul>
+          <p>Stack decidido: React Native + Expo + TypeScript</p>
+        </div>
+        <div class="bottom-nav">
+          <button class="nav-item"><span class="nav-icon">✓</span>Tareas</button>
+          <button class="nav-item"><span class="nav-icon">📅</span>Calendario</button>
+          <button class="nav-item active"><span class="nav-icon">📝</span>Notas</button>
+          <button class="nav-item"><span class="nav-icon">⚙️</span>Ajustes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 5: Nota de Voz -->
+  <div>
+    <div class="phone-label">Nota de Voz</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span class="time">9:41</span>
+          <span class="icons">📶 🔋</span>
+        </div>
+        <div class="header">
+          <div class="header-row">
+            <h1 style="font-size:16px; font-weight:600;">Nota de voz — 15 jul</h1>
+          </div>
+          <div class="header-subtitle">1.8 MB · 2:34</div>
+        </div>
+        <div class="voice-player">
+          <div class="waveform" id="waveform">
+            <!-- Bars generated by JS -->
+          </div>
+          <div class="player-controls">
+            <button class="play-btn">▶</button>
+            <span class="player-time">0:52</span>
+            <div class="player-progress"><div class="player-progress-fill"></div></div>
+            <span class="player-time">2:34</span>
+          </div>
+        </div>
+        <div class="transcription-box">
+          <div class="transcription-label">Transcripción (Whisper)</div>
+          "Necesito implementar el calendario con vista mensual como default. Al hacer tap en un día se muestra la lista de eventos. El botón de crear evento debe ser un FAB..."
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nota de texto adjunta</label>
+          <textarea class="form-input" rows="3" placeholder="Añade contexto a tu nota de voz..." style="resize:none;"></textarea>
+        </div>
+        <button class="save-btn" style="background: var(--danger);">Eliminar nota</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 6: Estado Vacío -->
+  <div>
+    <div class="phone-label">Estado Vacío</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span class="time">9:41</span>
+          <span class="icons">📶 🔋</span>
+        </div>
+        <div class="header">
+          <div class="header-row">
+            <h1>Calendario</h1>
+          </div>
+        </div>
+        <div class="calendar-nav">
+          <button>‹</button>
+          <span class="month">Julio 2026</span>
+          <button>›</button>
+        </div>
+        <div class="calendar-grid">
+          <div class="calendar-weekdays">
+            <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+          </div>
+          <div class="calendar-days">
+            <span class="calendar-day other-month">29</span>
+            <span class="calendar-day other-month">30</span>
+            <span class="calendar-day">1</span>
+            <span class="calendar-day">2</span>
+            <span class="calendar-day">3</span>
+            <span class="calendar-day">4</span>
+            <span class="calendar-day">5</span>
+            <span class="calendar-day">6</span>
+            <span class="calendar-day">7</span>
+            <span class="calendar-day">8</span>
+            <span class="calendar-day">9</span>
+            <span class="calendar-day">10</span>
+            <span class="calendar-day">11</span>
+            <span class="calendar-day">12</span>
+            <span class="calendar-day">13</span>
+            <span class="calendar-day">14</span>
+            <span class="calendar-day today">15</span>
+            <span class="calendar-day">16</span>
+            <span class="calendar-day">17</span>
+            <span class="calendar-day">18</span>
+            <span class="calendar-day">19</span>
+            <span class="calendar-day">20</span>
+            <span class="calendar-day">21</span>
+            <span class="calendar-day">22</span>
+            <span class="calendar-day">23</span>
+            <span class="calendar-day">24</span>
+            <span class="calendar-day">25</span>
+            <span class="calendar-day">26</span>
+            <span class="calendar-day">27</span>
+            <span class="calendar-day">28</span>
+            <span class="calendar-day">29</span>
+            <span class="calendar-day">30</span>
+            <span class="calendar-day">31</span>
+            <span class="calendar-day other-month">1</span>
+            <span class="calendar-day other-month">2</span>
+          </div>
+        </div>
+        <div class="empty-state">
+          <div class="empty-icon">📅</div>
+          <div class="empty-title">Sin eventos este día</div>
+          <div class="empty-desc">Toca <strong>+</strong> para crear tu primer evento</div>
+        </div>
+        <button class="fab">+</button>
+        <div class="bottom-nav">
+          <button class="nav-item"><span class="nav-icon">✓</span>Tareas</button>
+          <button class="nav-item active"><span class="nav-icon">📅</span>Calendario</button>
+          <button class="nav-item"><span class="nav-icon">📝</span>Notas</button>
+          <button class="nav-item"><span class="nav-icon">⚙️</span>Ajustes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Generate waveform bars
+    const waveform = document.getElementById('waveform');
+    const barCount = 60;
+    for (let i = 0; i < barCount; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'bar' + (i < barCount * 0.35 ? ' played' : '');
+      const h = Math.random() * 32 + 8;
+      bar.style.height = h + 'px';
+      waveform.appendChild(bar);
+    }
+
+    // Toggle interaction
+    document.querySelectorAll('.toggle').forEach(t => {
+      t.addEventListener('click', () => t.classList.toggle('on'));
+    });
+
+    // Category pills
+    document.querySelectorAll('.pill').forEach(p => {
+      p.addEventListener('click', () => {
+        document.querySelectorAll('.pill').forEach(x => x.classList.remove('selected'));
+        p.classList.add('selected');
+      });
+    });
+
+    // Preview toggle
+    document.querySelectorAll('.preview-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.preview-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
