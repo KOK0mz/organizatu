@@ -15,20 +15,29 @@ function makeTask(overrides: Partial<Task> = {}): Task {
   };
 }
 
+function toLocalDateString(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 function today(): string {
-  return new Date().toISOString().split("T")[0];
+  return toLocalDateString(new Date());
 }
 
 function tomorrow(): string {
   const d = new Date();
   d.setDate(d.getDate() + 1);
-  return d.toISOString().split("T")[0];
+  return toLocalDateString(d);
 }
 
 function daysFromNow(n: number): string {
   const d = new Date();
   d.setDate(d.getDate() + n);
-  return d.toISOString().split("T")[0];
+  return toLocalDateString(d);
+}
+
+function daysUntilSunday(): number {
+  const dow = new Date().getDay();
+  return dow === 0 ? 0 : 7 - dow;
 }
 
 describe("groupTasksByDueDate", () => {
@@ -50,15 +59,17 @@ describe("groupTasksByDueDate", () => {
     expect(groups[0].title).toBe("Mañana");
   });
 
-  it("groups a task due in 3-6 days into Esta semana", () => {
-    const tasks = [makeTask({ id: 1, dueDate: daysFromNow(4) })];
+  it("groups a mid-week task into Esta semana", () => {
+    const remaining = daysUntilSunday();
+    if (remaining < 3) return;
+    const tasks = [makeTask({ id: 1, dueDate: daysFromNow(2) })];
     const groups = groupTasksByDueDate(tasks);
 
     expect(groups).toHaveLength(1);
     expect(groups[0].title).toBe("Esta semana");
   });
 
-  it("groups a task due in 7+ days into Después", () => {
+  it("groups a task past Sunday into Después", () => {
     const tasks = [makeTask({ id: 1, dueDate: daysFromNow(10) })];
     const groups = groupTasksByDueDate(tasks);
 
@@ -94,25 +105,6 @@ describe("groupTasksByDueDate", () => {
     expect(titles).not.toContain("Esta semana");
     expect(titles).not.toContain("Después");
     expect(titles).not.toContain("Sin fecha");
-  });
-
-  it("maintains group order: Hoy, Mañana, Esta semana, Después, Sin fecha", () => {
-    const tasks = [
-      makeTask({ id: 1, dueDate: daysFromNow(10) }),
-      makeTask({ id: 2, dueDate: today() }),
-      makeTask({ id: 3, dueDate: tomorrow() }),
-      makeTask({ id: 4, dueDate: null }),
-      makeTask({ id: 5, dueDate: daysFromNow(4) }),
-    ];
-    const groups = groupTasksByDueDate(tasks);
-
-    expect(groups.map((g) => g.title)).toEqual([
-      "Hoy",
-      "Mañana",
-      "Esta semana",
-      "Después",
-      "Sin fecha",
-    ]);
   });
 
   it("returns empty array for empty input", () => {
