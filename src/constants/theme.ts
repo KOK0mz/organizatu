@@ -1,5 +1,6 @@
 const darkColors: ThemeColors = {
   primary: "#1D4ED8",
+  onPrimary: "#FFFFFF",
   background: "#0F172A",
   surface: "#1E293B",
   surfaceSecondary: "#334155",
@@ -15,6 +16,7 @@ const darkColors: ThemeColors = {
 
 const lightColors: ThemeColors = {
   primary: "#3B82F6",
+  onPrimary: "#FFFFFF",
   background: "#FFFFFF",
   surface: "#F8FAFC",
   surfaceSecondary: "#F1F5F9",
@@ -30,6 +32,7 @@ const lightColors: ThemeColors = {
 
 export interface ThemeColors {
   primary: string;
+  onPrimary: string;
   background: string;
   surface: string;
   surfaceSecondary: string;
