@@ -4,14 +4,14 @@
 
 **Blocked by:** 01 — Foundation: SQLite + Design System + Navigation
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Task list screen displays tasks grouped by due date sections: Hoy, Mañana, Esta semana, Después
-- [ ] Tasks without due date appear in a "Sin fecha" section
-- [ ] Each task shows title, category chip with color, and optional due date
-- [ ] FAB opens a create-task modal/form with: title (required), description (optional), due date picker, category selector (predefined chips)
-- [ ] Tapping checkbox marks task complete with strikethrough animation
-- [ ] Completed tasks move to bottom of their group (or fade out after 2 seconds)
-- [ ] Task list filters by category via horizontal chip bar at top
-- [ ] Empty state shown when no tasks exist, with illustration and "Crear tarea" CTA
-- [ ] Tasks are persisted in SQLite and survive app restarts
+- [x] Task list screen displays tasks grouped by due date sections: Hoy, Mañana, Esta semana, Después
+- [x] Tasks without due date appear in a "Sin fecha" section
+- [x] Each task shows title, category chip with color, and optional due date
+- [x] FAB opens a create-task modal/form with: title (required), description (optional), due date picker, category selector (predefined chips)
+- [x] Tapping checkbox marks task complete with strikethrough animation
+- [x] Completed tasks move to bottom of their group (or fade out after 2 seconds)
+- [x] Task list filters by category via horizontal chip bar at top
+- [x] Empty state shown when no tasks exist, with illustration and "Crear tarea" CTA
+- [x] Tasks are persisted in SQLite and survive app restarts
