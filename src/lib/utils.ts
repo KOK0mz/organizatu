@@ -33,7 +33,7 @@ export function groupTasksByDueDate(tasks: Task[]): TaskGroup[] {
 
   const weekEnd = new Date(now);
   const dayOfWeek = weekEnd.getDay();
-  const daysUntilSunday = (7 - dayOfWeek) % 7;
+  const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;
   weekEnd.setDate(weekEnd.getDate() + daysUntilSunday);
   weekEnd.setHours(23, 59, 59, 999);
 
